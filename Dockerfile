@@ -1,21 +1,23 @@
-# Use an official Ubuntu runtime as a parent image
-FROM ubuntu:20.04
-
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    python3-pip \
-    libcairo2-dev \
-    libgirepository1.0-dev \
-    gir1.2-gtk-3.0 \
-    libnotify-bin \
-    libdbus-1-dev \
-    libdbus-glib-1-dev
-
-# Install NTFY
-RUN pip3 install ntfy[all]
+# Use an official Node.js runtime as a parent image
+FROM node:14
 
 # Set the working directory to /app
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy the package.json file into the container at /app
+COPY package*.json ./
+
+# Install any needed packages specified in package.json
+RUN npm install
+
+# Copy the rest of the current directory contents into the container at /app
+COPY . .
+
+# Make port 3000 available to the world outside this container
+EXPOSE 3000
+
+# Define environment variable
+ENV NODE_ENV production
+
+# Run app.js when the container launches
+CMD ["node", "app.js"]
